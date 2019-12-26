@@ -1,0 +1,11 @@
+ - name: Check SCORMCLOUD API vars are set
+      assert:
+        that:
+          - student_id is defined
+          - course_id is defined
+          - course_id is defined
+          - lab_id is defined
+          - lab_passed is defined
+        msg: |
+         All the following variables must be defined:
+          - student_id

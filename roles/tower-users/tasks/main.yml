@@ -1,0 +1,35 @@
+---
+- name: Manage Ansible Tower users
+  block:
+
+    - name: Check tower_user_accounts is defined
+      assert:
+        that:
+          - tower_user_accounts is defined
+        msg: tower_user_accounts must be defined 
+
+    - when: tower_user_accounts is defined
+      name: "Manage Ansible Tower Users state"
+      tower_user:
+        username:         "{{ user.user }}"
+        password:         "{{ user.password         | default(tower_user_default_password) }}"
+        email:            "{{ user.email            | default(tower_user_default_email) }}"
+        first_name:       "{{ user.firstname        | default(user.user) }}"
+        last_name:        "{{ user.lastname         | default(user.user) }}"
+        superuser:        "{{ user.superuser        | default('no') }}"
+        state:            "{{ user.state            | default('present') }}"
+        tower_host:       "{{ tower_hostname        | default(omit) }}"  
+        tower_username:   "{{ tower_username        | default(omit) }}"
+        tower_password:   "{{ tower_admin_password  | default(omit) }}"
+        tower_verify_ssl: "{{ tower_verify_ssl      | default(false) }}"
+      loop: "{{ tower_user_accounts }}"
+      loop_control:
+        loop_var: user
+      no_log: "{{ no_log | default(true) }}"  
+
+  tags:
+    - tower-user-create
+    - tower-user-delete
+    - tower-user-manage
+    - tower-user
+...

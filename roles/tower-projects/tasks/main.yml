@@ -1,0 +1,39 @@
+---
+- name: Manage Ansible Tower Projects
+  block:
+
+    - name: Check tower_projects is defined
+      assert:
+        that:
+          - tower_projects is defined
+        msg: tower_projects must be defined 
+
+    - when: tower_projects is defined
+      name: "Manage Ansible Tower projects state"
+      tower_project:
+        name:                 "{{ project.name }}"
+        description:          "{{ project.description           | default('No description') }}"
+        organization:         "{{ project.organization          | default('Default') }}"
+        scm_url:              "{{ project.scm_url }}"
+        scm_type:             "{{ project.scm_type              | default('git') }}"
+        scm_credential:       "{{ project.scm_credential        | default(omit) }}"
+        scm_branch:           "{{ project.scm_branch            | default(omit) }}"
+        scm_update_on_launch: "{{ project.scm_update_on_launch  | default('false') }}"
+        state:                "{{ projct.state                  | default('present') }}"
+        tower_host:           "{{ tower_hostname                | default(omit) }}"  
+        tower_username:       "{{ tower_username                | default(omit) }}"
+        tower_password:       "{{ tower_admin_password          | default(omit) }}"
+        tower_verify_ssl:     "{{ tower_verify_ssl              | default(false) }}"
+      loop: "{{ tower_projects }}"
+      loop_control:
+        loop_var: project
+
+    - name: Pause to allow Ansible Tower Projects to populate
+      wait_for:
+        timeout: 40
+  tags:
+    - tower-project-create
+    - tower-project-delete
+    - tower-project-manage
+    - tower-project
+...

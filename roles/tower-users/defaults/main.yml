@@ -1,0 +1,4 @@
+---
+tower_user_default_password:    changeme
+tower_user_default_email:       john-snow@example.com
+...
