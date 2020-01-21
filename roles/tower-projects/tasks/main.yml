@@ -2,11 +2,10 @@
 - name: Manage Ansible Tower Projects
   block:
 
-    - name: Check tower_projects is defined
-      assert:
-        that:
-          - tower_projects is defined
-        msg: tower_projects must be defined 
+    - when: tower_projects is not defined
+      name: Check tower_projects is defined
+      debug:
+        msg: tower_projects not defined - no further action from role
 
     - when: tower_projects is defined
       name: "Manage Ansible Tower projects state"
@@ -32,8 +31,8 @@
       wait_for:
         timeout: 40
   tags:
-    - tower-project-create
-    - tower-project-delete
-    - tower-project-manage
-    - tower-project
+    - tower-projects-create
+    - tower-projects-delete
+    - tower-projects-manage
+    - tower-projects
 ...

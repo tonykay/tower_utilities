@@ -1,0 +1,31 @@
+---
+- name: Manage Ansible Tower users
+  block:
+
+    - when: tower_organizations is not defined
+      name: Check tower_organizations is defined
+      debug:
+        msg: tower_organizations not defined - no further action from role 
+
+    - when: tower_organizations is defined
+      name: "Manage Ansible Tower Organizations state"
+      tower_organization:
+        name:               "{{ organization.name         | default('default') }}"
+        description:        "{{ organization.description  | default('') }}"
+        state:              "{{ organization.state        | default('present') }}"
+        tower_config_file:  "{{ tower_config_file         | default(omit) }}"  
+        tower_host:         "{{ tower_hostname            | default(omit) }}"  
+        tower_username:     "{{ tower_username            | default(omit) }}"
+        tower_password:     "{{ tower_admin_password      | default(omit) }}"
+        validate_certs:     "{{ tower_verify_ssl          | default(false) }}"
+      loop: "{{ tower_organizations }}"
+      loop_control:
+        loop_var: organization
+      no_log: "{{ no_log | default(true) }}"  
+
+  tags:
+    - tower-organizations-create
+    - tower-organizations-delete
+    - tower-organizations-manage
+    - tower-organizations
+...

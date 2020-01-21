@@ -2,13 +2,12 @@
 - name: Manage Ansible Tower users
   block:
 
-    - name: Check tower_user_accounts is defined
-      assert:
-        that:
-          - tower_user_accounts is defined
-        msg: tower_user_accounts must be defined 
+    - when: tower_users is not defined
+      name: Check tower_users is defined
+      debug:
+        msg: tower_users not defined - no further action from role 
 
-    - when: tower_user_accounts is defined
+    - when: tower_users is defined
       name: "Manage Ansible Tower Users state"
       tower_user:
         username:         "{{ user.user }}"
@@ -22,14 +21,14 @@
         tower_username:   "{{ tower_username        | default(omit) }}"
         tower_password:   "{{ tower_admin_password  | default(omit) }}"
         tower_verify_ssl: "{{ tower_verify_ssl      | default(false) }}"
-      loop: "{{ tower_user_accounts }}"
+      loop: "{{ tower_users }}"
       loop_control:
         loop_var: user
       no_log: "{{ no_log | default(true) }}"  
 
   tags:
-    - tower-user-create
-    - tower-user-delete
-    - tower-user-manage
-    - tower-user
+    - tower-users-create
+    - tower-users-delete
+    - tower-users-manage
+    - tower-users
 ...
